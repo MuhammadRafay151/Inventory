@@ -132,6 +132,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
     <Compile Include="EntityModel\InvoiceType.cs">
@@ -182,6 +183,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\InvoiceType.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\party.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -585,6 +587,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Party\Index.cshtml" />
     <Content Include="Views\Location\Index.cshtml" />
+    <Content Include="Views\Invoice\Types.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
