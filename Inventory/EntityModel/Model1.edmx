@@ -1,0 +1,578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="InventoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="InvoiceType">
+          <Key>
+            <PropertyRef Name="InvoiceTypeId" />
+          </Key>
+          <Property Name="InvoiceTypeId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceType" Type="nchar" MaxLength="25" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="ItemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="PurchasePrice" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="SalePrice" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsShop" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Party">
+          <Key>
+            <PropertyRef Name="PartyId" />
+          </Key>
+          <Property Name="PartyId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsVendor" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SaleInvoice">
+          <Key>
+            <PropertyRef Name="SaleInvoiceId" />
+          </Key>
+          <Property Name="SaleInvoiceId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="InvoiceTypeId" Type="bigint" Nullable="false" />
+          <Property Name="LocationId" Type="bigint" Nullable="false" />
+          <Property Name="PartyId" Type="bigint" Nullable="false" />
+          <Property Name="TotalAmount" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SaleInvoiceDetail">
+          <Key>
+            <PropertyRef Name="SaleInvoiceDetailId" />
+          </Key>
+          <Property Name="SaleInvoiceDetailId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SaleInvoiceId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Qty" Type="int" Nullable="false" />
+          <Property Name="SalePrice" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Stock">
+          <Key>
+            <PropertyRef Name="StockId" />
+          </Key>
+          <Property Name="StockId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="CurrentQty" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StockTrans">
+          <Key>
+            <PropertyRef Name="StockTransId" />
+          </Key>
+          <Property Name="StockTransId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="StockTransTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StockTransType">
+          <Key>
+            <PropertyRef Name="StockTransTypeId" />
+          </Key>
+          <Property Name="StockTransTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Transaction" Type="nchar" MaxLength="25" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK_SaleInvoice_InvoiceType">
+          <End Role="InvoiceType" Type="Self.InvoiceType" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InvoiceType">
+              <PropertyRef Name="InvoiceTypeId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="InvoiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoice_Location">
+          <End Role="Location" Type="Self.Location" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Location">
+              <PropertyRef Name="LocationId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="LocationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoice_PartyId">
+          <End Role="Party" Type="Self.Party" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Party">
+              <PropertyRef Name="PartyId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="PartyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoiceDetail_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="SaleInvoiceDetail" Type="Self.SaleInvoiceDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="SaleInvoiceDetail">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoiceDetail_SaleInvoice">
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="1" />
+          <End Role="SaleInvoiceDetail" Type="Self.SaleInvoiceDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SaleInvoice">
+              <PropertyRef Name="SaleInvoiceId" />
+            </Principal>
+            <Dependent Role="SaleInvoiceDetail">
+              <PropertyRef Name="SaleInvoiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Stock" Type="Self.Stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="Stock">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockTrans_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="StockTrans" Type="Self.StockTrans" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="StockTrans">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="InventoryModelStoreContainer">
+          <EntitySet Name="InvoiceType" EntityType="Self.InvoiceType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Party" EntityType="Self.Party" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SaleInvoice" EntityType="Self.SaleInvoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SaleInvoiceDetail" EntityType="Self.SaleInvoiceDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stock" EntityType="Self.Stock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StockTrans" EntityType="Self.StockTrans" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StockTransType" EntityType="Self.StockTransType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_SaleInvoice_InvoiceType" Association="Self.FK_SaleInvoice_InvoiceType">
+            <End Role="InvoiceType" EntitySet="InvoiceType" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoice_Location" Association="Self.FK_SaleInvoice_Location">
+            <End Role="Location" EntitySet="Location" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoice_PartyId" Association="Self.FK_SaleInvoice_PartyId">
+            <End Role="Party" EntitySet="Party" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoiceDetail_Item" Association="Self.FK_SaleInvoiceDetail_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="SaleInvoiceDetail" EntitySet="SaleInvoiceDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoiceDetail_SaleInvoice" Association="Self.FK_SaleInvoiceDetail_SaleInvoice">
+            <End Role="SaleInvoice" EntitySet="SaleInvoice" />
+            <End Role="SaleInvoiceDetail" EntitySet="SaleInvoiceDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_Item" Association="Self.FK_Stock_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Stock" EntitySet="Stock" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockTrans_Item" Association="Self.FK_StockTrans_Item">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="StockTrans" EntitySet="StockTrans" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="InventoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="InvoiceType">
+          <Key>
+            <PropertyRef Name="InvoiceTypeId" />
+          </Key>
+          <Property Name="InvoiceTypeId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceType1" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="SaleInvoices" Relationship="Self.FK_SaleInvoice_InvoiceType" FromRole="InvoiceType" ToRole="SaleInvoice" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="ItemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="PurchasePrice" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="SalePrice" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <NavigationProperty Name="SaleInvoiceDetails" Relationship="Self.FK_SaleInvoiceDetail_Item" FromRole="Item" ToRole="SaleInvoiceDetail" />
+          <NavigationProperty Name="Stocks" Relationship="Self.FK_Stock_Item" FromRole="Item" ToRole="Stock" />
+          <NavigationProperty Name="StockTrans" Relationship="Self.FK_StockTrans_Item" FromRole="Item" ToRole="StockTrans" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="IsShop" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="SaleInvoices" Relationship="Self.FK_SaleInvoice_Location" FromRole="Location" ToRole="SaleInvoice" />
+        </EntityType>
+        <EntityType Name="Party">
+          <Key>
+            <PropertyRef Name="PartyId" />
+          </Key>
+          <Property Name="PartyId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="IsVendor" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="SaleInvoices" Relationship="Self.FK_SaleInvoice_PartyId" FromRole="Party" ToRole="SaleInvoice" />
+        </EntityType>
+        <EntityType Name="SaleInvoice">
+          <Key>
+            <PropertyRef Name="SaleInvoiceId" />
+          </Key>
+          <Property Name="SaleInvoiceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="InvoiceTypeId" Type="Int64" Nullable="false" />
+          <Property Name="LocationId" Type="Int64" Nullable="false" />
+          <Property Name="PartyId" Type="Int64" Nullable="false" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <NavigationProperty Name="InvoiceType" Relationship="Self.FK_SaleInvoice_InvoiceType" FromRole="SaleInvoice" ToRole="InvoiceType" />
+          <NavigationProperty Name="Location" Relationship="Self.FK_SaleInvoice_Location" FromRole="SaleInvoice" ToRole="Location" />
+          <NavigationProperty Name="Party" Relationship="Self.FK_SaleInvoice_PartyId" FromRole="SaleInvoice" ToRole="Party" />
+          <NavigationProperty Name="SaleInvoiceDetails" Relationship="Self.FK_SaleInvoiceDetail_SaleInvoice" FromRole="SaleInvoice" ToRole="SaleInvoiceDetail" />
+        </EntityType>
+        <EntityType Name="SaleInvoiceDetail">
+          <Key>
+            <PropertyRef Name="SaleInvoiceDetailId" />
+          </Key>
+          <Property Name="SaleInvoiceDetailId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SaleInvoiceId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Qty" Type="Int32" Nullable="false" />
+          <Property Name="SalePrice" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <NavigationProperty Name="Item" Relationship="Self.FK_SaleInvoiceDetail_Item" FromRole="SaleInvoiceDetail" ToRole="Item" />
+          <NavigationProperty Name="SaleInvoice" Relationship="Self.FK_SaleInvoiceDetail_SaleInvoice" FromRole="SaleInvoiceDetail" ToRole="SaleInvoice" />
+        </EntityType>
+        <EntityType Name="Stock">
+          <Key>
+            <PropertyRef Name="StockId" />
+          </Key>
+          <Property Name="StockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="CurrentQty" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Item" Relationship="Self.FK_Stock_Item" FromRole="Stock" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="StockTran">
+          <Key>
+            <PropertyRef Name="StockTransId" />
+          </Key>
+          <Property Name="StockTransId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="StockTransTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Item" Relationship="Self.FK_StockTrans_Item" FromRole="StockTrans" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="StockTransType">
+          <Key>
+            <PropertyRef Name="StockTransTypeId" />
+          </Key>
+          <Property Name="StockTransTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Transaction" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_SaleInvoice_InvoiceType">
+          <End Role="InvoiceType" Type="Self.InvoiceType" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InvoiceType">
+              <PropertyRef Name="InvoiceTypeId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="InvoiceTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoiceDetail_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="SaleInvoiceDetail" Type="Self.SaleInvoiceDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="SaleInvoiceDetail">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stock_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Stock" Type="Self.Stock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="Stock">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StockTrans_Item">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="StockTrans" Type="Self.StockTran" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemId" />
+            </Principal>
+            <Dependent Role="StockTrans">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoice_Location">
+          <End Role="Location" Type="Self.Location" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Location">
+              <PropertyRef Name="LocationId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="LocationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoice_PartyId">
+          <End Role="Party" Type="Self.Party" Multiplicity="1" />
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Party">
+              <PropertyRef Name="PartyId" />
+            </Principal>
+            <Dependent Role="SaleInvoice">
+              <PropertyRef Name="PartyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SaleInvoiceDetail_SaleInvoice">
+          <End Role="SaleInvoice" Type="Self.SaleInvoice" Multiplicity="1" />
+          <End Role="SaleInvoiceDetail" Type="Self.SaleInvoiceDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SaleInvoice">
+              <PropertyRef Name="SaleInvoiceId" />
+            </Principal>
+            <Dependent Role="SaleInvoiceDetail">
+              <PropertyRef Name="SaleInvoiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="InventoryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="InvoiceTypes" EntityType="Self.InvoiceType" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="Locations" EntityType="Self.Location" />
+          <EntitySet Name="Parties" EntityType="Self.Party" />
+          <EntitySet Name="SaleInvoices" EntityType="Self.SaleInvoice" />
+          <EntitySet Name="SaleInvoiceDetails" EntityType="Self.SaleInvoiceDetail" />
+          <EntitySet Name="Stocks" EntityType="Self.Stock" />
+          <EntitySet Name="StockTrans" EntityType="Self.StockTran" />
+          <EntitySet Name="StockTransTypes" EntityType="Self.StockTransType" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <AssociationSet Name="FK_SaleInvoice_InvoiceType" Association="Self.FK_SaleInvoice_InvoiceType">
+            <End Role="InvoiceType" EntitySet="InvoiceTypes" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoiceDetail_Item" Association="Self.FK_SaleInvoiceDetail_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="SaleInvoiceDetail" EntitySet="SaleInvoiceDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stock_Item" Association="Self.FK_Stock_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Stock" EntitySet="Stocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StockTrans_Item" Association="Self.FK_StockTrans_Item">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="StockTrans" EntitySet="StockTrans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoice_Location" Association="Self.FK_SaleInvoice_Location">
+            <End Role="Location" EntitySet="Locations" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoice_PartyId" Association="Self.FK_SaleInvoice_PartyId">
+            <End Role="Party" EntitySet="Parties" />
+            <End Role="SaleInvoice" EntitySet="SaleInvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SaleInvoiceDetail_SaleInvoice" Association="Self.FK_SaleInvoiceDetail_SaleInvoice">
+            <End Role="SaleInvoice" EntitySet="SaleInvoices" />
+            <End Role="SaleInvoiceDetail" EntitySet="SaleInvoiceDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="InventoryModelStoreContainer" CdmEntityContainer="InventoryEntities">
+          <EntitySetMapping Name="InvoiceTypes">
+            <EntityTypeMapping TypeName="InventoryModel.InvoiceType">
+              <MappingFragment StoreEntitySet="InvoiceType">
+                <ScalarProperty Name="InvoiceTypeId" ColumnName="InvoiceTypeId" />
+                <ScalarProperty Name="InvoiceType1" ColumnName="InvoiceType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="InventoryModel.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="PurchasePrice" ColumnName="PurchasePrice" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Locations">
+            <EntityTypeMapping TypeName="InventoryModel.Location">
+              <MappingFragment StoreEntitySet="Location">
+                <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsShop" ColumnName="IsShop" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Parties">
+            <EntityTypeMapping TypeName="InventoryModel.Party">
+              <MappingFragment StoreEntitySet="Party">
+                <ScalarProperty Name="PartyId" ColumnName="PartyId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsVendor" ColumnName="IsVendor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SaleInvoices">
+            <EntityTypeMapping TypeName="InventoryModel.SaleInvoice">
+              <MappingFragment StoreEntitySet="SaleInvoice">
+                <ScalarProperty Name="SaleInvoiceId" ColumnName="SaleInvoiceId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="InvoiceTypeId" ColumnName="InvoiceTypeId" />
+                <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+                <ScalarProperty Name="PartyId" ColumnName="PartyId" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SaleInvoiceDetails">
+            <EntityTypeMapping TypeName="InventoryModel.SaleInvoiceDetail">
+              <MappingFragment StoreEntitySet="SaleInvoiceDetail">
+                <ScalarProperty Name="SaleInvoiceDetailId" ColumnName="SaleInvoiceDetailId" />
+                <ScalarProperty Name="SaleInvoiceId" ColumnName="SaleInvoiceId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stocks">
+            <EntityTypeMapping TypeName="InventoryModel.Stock">
+              <MappingFragment StoreEntitySet="Stock">
+                <ScalarProperty Name="StockId" ColumnName="StockId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="CurrentQty" ColumnName="CurrentQty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockTrans">
+            <EntityTypeMapping TypeName="InventoryModel.StockTran">
+              <MappingFragment StoreEntitySet="StockTrans">
+                <ScalarProperty Name="StockTransId" ColumnName="StockTransId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="StockTransTypeId" ColumnName="StockTransTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockTransTypes">
+            <EntityTypeMapping TypeName="InventoryModel.StockTransType">
+              <MappingFragment StoreEntitySet="StockTransType">
+                <ScalarProperty Name="StockTransTypeId" ColumnName="StockTransTypeId" />
+                <ScalarProperty Name="Transaction" ColumnName="Transaction" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="InventoryModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
