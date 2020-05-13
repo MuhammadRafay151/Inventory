@@ -1,0 +1,190 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model Inventory.Models.SalesInvoice
+<div class="row mt-5">
+    <div class="col">
+        <div class="card">
+            <form action="/Invoice/Create/" method="post">
+                <div class="card-header border border-dark">
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+                                @{
+                                    var l1 = new List<SelectListItem>();
+                                    l1.Add(new SelectListItem() { Text = "Select location", Disabled = true, Selected = true, Value = "" });
+                                    foreach (Inventory.Models.Location l2 in ViewBag.loc)
+                                    {
+
+                                        l1.Add(new SelectListItem() { Text = l2.name, Value = l2.id.ToString() });
+
+                                    }
+                                }
+                                <label for="exampleSelect1" class="bmd-label-static">Select Location</label>
+                                @Html.DropDownListFor(m => m.LocationId, l1, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.LocationId, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                @{
+                                    var l3 = new List<SelectListItem>();
+                                    l3.Add(new SelectListItem() { Text = "Select Party", Disabled = true, Selected = true, Value = "" });
+                                    foreach (Inventory.Models.party l2 in ViewBag.party)
+                                    {
+
+                                        l3.Add(new SelectListItem() { Text = l2.name, Value = l2.id.ToString() });
+
+                                    }
+                                }
+                                <label for="exampleSelect1" class="bmd-label-static">Select Party</label>
+                                @Html.DropDownListFor(m => m.PartyId, l3, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.PartyId, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col">
+                            <div class="form-group">
+
+
+                                @{
+                                    var l4 = new List<SelectListItem>();
+                                    l4.Add(new SelectListItem() { Text = "Select Invoice Type", Disabled = true, Selected = true, Value = "" });
+                                    foreach (Inventory.Models.InvoiceType l2 in ViewBag.itypes)
+                                    {
+
+                                        l4.Add(new SelectListItem() { Text = l2.type, Value = l2.id.ToString() });
+
+                                    }
+                                }
+                                <label for="exampleSelect1" class="bmd-label-static">Select Invoice Type</label>
+                                @Html.DropDownListFor(m => m.InvoiceTypeId, l4, new { @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.InvoiceTypeId, "", new { @class = "text-danger" })
+
+
+                            </div>
+
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="exampleSelect1" class="bmd-label-static">Select Date</label>
+                                @Html.TextBoxFor(m => m.Date, new { type = "date", @class = "form-control", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+                    @*<button class="btn btn-block btn-raised btn-primary d-inline">Submit</button>*@
+                    <div class="d-flex w-100">
+                        <div class="  align-self-center w-75">
+                            <button class="btn btn-primary btn-block btn-raised">Submit</button>
+                        </div>
+                        <div class="btn-group ml-auto ">
+                            <button id="add" type="button" class="btn btn-primary btn-raised">+</button>
+                            <button id="sub" type="button" class="btn btn-primary btn-raised">-</button>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: scroll ">
+                    <table class="table text-center table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>
+                                    Item
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Qty
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.SaleInvoiceDetails != null)
+                            {
+                                for (var i = 0; i < Model.SaleInvoiceDetails.Count; i++)
+                                {
+                                    <tr>
+                                        @{
+                                            var l5 = new List<SelectListItem>();
+                                            l5.Add(new SelectListItem() { Text = "Select Item", Disabled = true, Selected = true, Value = "" });
+                                            foreach (Inventory.Models.Item l2 in ViewBag.items)
+                                            {
+
+                                                l5.Add(new SelectListItem() { Text = l2.Name, Value = l2.ItemId.ToString() });
+
+                                            }
+                                        }
+
+                                        <td class="align-middle  text-center">
+                                            @Html.DropDownListFor(m => m.SaleInvoiceDetails[i].ItemId, l5, new { @class = "form-control", required = "required" })
+                                            @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].ItemId, "", new { @class = "text-danger" })
+
+                                        </td>
+                                        <td class="price align-middle  text-center"></td>
+                                        <td class="align-middle  text-center">
+                                            @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].Qty, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].Qty, "", new { @class = "text-danger" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            @Html.ValidationMessageFor(m => m.SaleInvoiceDetails, "", new { @class = "text-danger" })
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    var count=0;
+
+    $(document).ready(function () {
+
+        $('#add').click(function () {
+            var templete = `<tr>
+                               <td class="align-middle  text-center">
+                                    <select   name="SaleInvoiceDetails[${count}].ItemId" class="form-control _items" required  >
+                                        <option selected disabled value>Select Item</option>
+                                   @foreach (Inventory.Models.Item l2 in ViewBag.items)
+                                    {
+                                        <option data-price=@l2.SalePrice value="@l2.ItemId">@l2.Name</option>
+                                    }
+                                    </select>
+                                </td>
+                                <td class="price align-middle  text-center"></td>
+                                <td class="align-middle  text-center">
+                                    <input required  name="SaleInvoiceDetails[${count}].Qty" class="form-control" />
+                                </td>
+                            </tr>`;
+            count++;
+            $('tbody').append(templete)
+        })
+          $('#add').trigger("click");
+        $('#sub').click(function () {
+            $('tbody').children().last().remove();
+            count--;
+        })
+
+        $(document).on('change', '._items',function () {
+
+            var selected_option = this.options[this.selectedIndex];
+            $(this.parentNode.parentNode).find('.price').html($(selected_option).data("price")+" Rs");
+        })
+    });
+</script>
+
+
+
+
+

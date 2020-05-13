@@ -135,6 +135,7 @@
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\PartyController.cs" />
+    <Compile Include="CustomValidation\IsSelected.cs" />
     <Compile Include="EntityModel\InvoiceType.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -184,8 +185,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\InvoiceType.cs" />
+    <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\party.cs" />
+    <Compile Include="Models\SaleInvoiceDetail.cs" />
+    <Compile Include="Models\SalesInvoice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -588,6 +592,7 @@
     <Content Include="Views\Party\Index.cshtml" />
     <Content Include="Views\Location\Index.cshtml" />
     <Content Include="Views\Invoice\Types.cshtml" />
+    <Content Include="Views\Invoice\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

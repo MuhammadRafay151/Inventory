@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.ModelBinding;
 using System.Web.Mvc;
-
+using Inventory.Models;
 namespace Inventory.Controllers
 {
     public class InvoiceController : Controller
@@ -11,68 +12,84 @@ namespace Inventory.Controllers
         // GET: Invoice
         public ActionResult Types()
         {
+            ViewBag.data = InvoiceType.get();
             return View();
         }
-
-
-        // POST: Invoice/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult TypeCreate([Form]InvoiceType i1)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    i1.Create();
+                }
+                else
+                {
+                    return View("Types", i1);
+                }
+                return RedirectToAction("Types");
             }
             catch
             {
-                return View();
+                return View("Types", i1);
             }
         }
-
-        // GET: Invoice/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult TypeEdit(int id)
         {
-            return View();
+            var x = InvoiceType.get(id);
+            return Json(Newtonsoft.Json.JsonConvert.SerializeObject(x.Tables[0]), JsonRequestBehavior.AllowGet);
         }
-
-        // POST: Invoice/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult TypeEdit([Form]InvoiceType i1)
         {
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    i1.Update();
+                }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Types");
             }
             catch
             {
-                return View();
+                return View("Types");
             }
         }
-
-        // GET: Invoice/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult TypeDelete(int id)
         {
+            InvoiceType i1 = new InvoiceType() { id = id };
+            i1.Delete();
+            return RedirectToAction("Types");
+        }
+
+        public ActionResult Create()
+        {
+            ViewBag.itypes = InvoiceType.get();
+            ViewBag.loc = Location.GetLocations();
+            ViewBag.party = party.Getparties();
+            ViewBag.items = Item.Get();
             return View();
         }
-
-        // POST: Invoice/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Create(SalesInvoice s1)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Create");
             }
-            catch
+            else
             {
-                return View();
+                ViewBag.itypes = InvoiceType.get();
+                ViewBag.loc = Location.GetLocations();
+                ViewBag.party = party.Getparties();
+                ViewBag.items = Item.Get();
+                return View(s1);
             }
+           
         }
+
+
     }
 }

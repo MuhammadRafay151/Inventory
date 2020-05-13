@@ -3,6 +3,139 @@
     ViewBag.Title = "Types";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model Inventory.Models.InvoiceType
+    
 
-<h2>Types</h2>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button id="y1" type="button" class="btn btn-primary">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* edit modal *@
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="f1" action="/Invoice/TypeEdit/" method="post">
+                    <div class="row">
+                        <div class="col">
+                            <fieldset class="form-group">
+                                <label for="exampleInputEmail1" class="bmd-label-static">Name</label>
+                                @Html.TextBoxFor(m => m.type, new { @class = "form-control", required = "required", id = "e1" })
+                                @* <span class="bmd-help">We'll never share your email with anyone else.</span>*@
+
+                            </fieldset>
+                            
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-block btn-raised btn-primary mt-2">Update</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-5">
+    <div class="col">
+        <div class="card">
+            <div class="card-header border border-dark">
+                <form action="/Invoice/TypeCreate/" method="post">
+                    <div class="row ">
+                        <div class="col">
+                            <fieldset class="form-group">
+                                <label for="exampleInputEmail1" class="bmd-label-floating">Invoice Type</label>
+                                @Html.TextBoxFor(m => m.type, new { @class = "form-control", required = "required" })
+                                @* <span class="bmd-help">We'll never share your email with anyone else.</span>*@
+
+                            </fieldset>
+
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-block btn-raised btn-primary">Add Invoice Type</button>
+                </form>
+            </div>
+            <div class="card-body">
+                <table class="table text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>
+                                Types
+                            </th>
+                            
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Inventory.Models.InvoiceType i in @ViewBag.data)
+                        {
+                            <tr>
+                                <td>
+                                    @i.type
+                                </td>
+
+                                <td>
+                                    <button class="btn btn-primary edt" data-id="@i.id">Edit</button>
+                                    <button class="btn btn-primary del" data-toggle="modal" data-target="#exampleModalCenter" data-id="@i.id">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var InvoiceType;
+    $(document).ready(function () {
+        $('.del').click(function () {
+            InvoiceType = $(this).data("id");
+        })
+        $('#y1').click(function () {
+            window.location.href = "/Invoice/TypeDelete/" + InvoiceType;
+        })
+        $('.edt').click(function () {
+            InvoiceType = $(this).data("id");
+            $('#f1').attr("action", "/Invoice/TypeEdit?id=" + InvoiceType)
+            $.ajax({
+                url: "/Invoice/TypeEdit/" + InvoiceType,
+                method: "Get",
+                success: res => {
+                    x = JSON.parse(res);
+                    $('#e1').val(x[0].InvoiceType);
+                    $('#edit').modal('show')
+
+                }
+            })
+
+
+        })
+    });
+</script>
+
+
 
