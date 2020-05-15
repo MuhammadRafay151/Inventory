@@ -83,7 +83,7 @@
                     <div class="d-flex w-100">
                         <div class="  align-self-center w-75">
                             <input type="submit" class="btn btn-primary btn-block btn-raised">
-                           
+
                         </div>
                         <div class="btn-group ml-auto ">
                             <button id="add" type="button" class="btn btn-primary btn-raised">+</button>
@@ -134,24 +134,24 @@
                                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].ItemId, "", new { @class = "text-danger" })
 
                                         </td>
-                                        <td class="price align-middle  text-center">
+                                        <td class="align-middle  text-center">
                                             @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].SalePrice, new { @class = "form-control  price", type = "number" })
                                         </td>
                                         <td class="align-middle  text-center">
-                                           
+
                                             @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].Qty, new { @class = "form-control qty", type = "number" })
                                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].Qty, "", new { @class = "text-danger" })
                                         </td>
-                                        <td class="align-middle  text-center">
-
-                                        </td>
+                                        <td class="align-middle  text-center"></td>
                                     </tr>
                                 }
                             }
                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails, "", new { @class = "text-danger" })
                         </tbody>
                     </table>
-
+                    <div class="d-flex justify-content-end">
+                        <p id="total">Total: 0.000 Rs</p>
+                    </div>
                 </div>
 
             </form>
@@ -161,11 +161,9 @@
 </div>
 <script>
     var count=0;
-  function a() {
-        console.log("a");
-    }
-    $(document).ready(function () {
 
+    $(document).ready(function () {
+        count = $('tbody').children().length;
         $('#add').click(function () {
             var templete = `<tr>
                                <td class="align-middle  text-center">
@@ -178,10 +176,16 @@
                                     </select>
                                 </td>
                                 <td class=" align-middle  text-center">
+<span class="bmd-form-group">
+
                                 <input type="number"  name="SaleInvoiceDetails[${count}].SalePrice" class="form-control price" step="any" required/>
-                                </td>
+</span>
+</td>
                                 <td class="align-middle  text-center">
+<span class="bmd-form-group">
                                     <input type="number"    name="SaleInvoiceDetails[${count}].Qty" class="form-control qty"  required/>
+
+</span>
                                 </td>
                                <td class="align-middle  text-center">
 
@@ -191,7 +195,6 @@
             count++;
             $('tbody').append(templete)
         })
-        
         $('#sub').click(function () {
             if ($('tbody').children().length>0) {
                  $('tbody').children().last().remove();
@@ -201,11 +204,13 @@
         })
         $(document).on('focusout', '.qty', function () {
             var qty = this.value;
-            var price = this.parentNode.parentNode.children[1].children[0].value;
+            var price = $(this.parentNode.parentNode.parentNode).find('.price').val();
+
             try {
                 var temp = parseFloat(qty) * parseFloat(price);
                 if (!isNaN(temp)) {
-                    this.parentNode.parentNode.children[3].innerHTML=temp+" Rs"
+                    this.parentNode.parentNode.parentNode.children[3].innerHTML = temp.toFixed(3) + " Rs"
+                    calculatebill();
                 }
             } catch (err) {
                 console.log(err);
@@ -213,25 +218,36 @@
 
         })
         $(document).on('focusout', '.price', function () {
-          
+
             var price = this.value;
-            var qty = this.parentNode.parentNode.children[2].children[0].value;
+            var qty = $(this.parentNode.parentNode.parentNode).find('.qty').val();
             try {
                 var temp = parseFloat(qty) * parseFloat(price);
                 if (!isNaN(temp)) {
-                    this.parentNode.parentNode.children[3].innerHTML=temp+" Rs"
+                    this.parentNode.parentNode.parentNode.children[3].innerHTML = temp.toFixed(3) + " Rs"
+                     calculatebill();
                 }
             } catch (err) {
                 console.log(err);
             };
          })
-   
         $(document).on('change', '._items', function () {
             var selected_option = this.options[this.selectedIndex];
-            $(this.parentNode.parentNode).find('.price').val($(selected_option).data("price") );
+            $(this.parentNode.parentNode).find('.price').val($(selected_option).data("price"));
+            $(this.parentNode.parentNode).find('.price').trigger('focusout');
         })
     });
-
+    function calculatebill(){
+        var total = 0.0;
+        var x = document.getElementsByTagName("tr");
+        var total = 0.0;
+        for (var i = 1; i < x.length; i++) {
+            var data = x[i].cells[3].innerHTML;
+           total+=parseFloat(data.split(" ")[0]);
+        }
+        $('#total').html('Total: ' + total.toFixed(3) + " Rs");
+        //console.log(total);
+    }
 </script>
 
 

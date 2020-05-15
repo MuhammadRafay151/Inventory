@@ -28,7 +28,7 @@
                     <td>
                         <div class="btn-group">
                             <button class="btn btn-primary btn-raised">Details</button>
-                            <button class="btn btn-primary btn-raised">Edit</button>
+                            <button id="edt" class="btn btn-primary btn-raised">Edit</button>
                             <button class="btn btn-primary btn-raised">Delete</button>
 
                         </div>
@@ -40,4 +40,11 @@
     </div>
 
 </div>
+<script>
+    $(document).ready(function () {
+        $('#edt').click(function () {
+            window.location.href=""
+        })
+    });
+</script>
 

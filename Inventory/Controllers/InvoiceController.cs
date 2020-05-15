@@ -95,9 +95,20 @@ namespace Inventory.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            return View( SalesInvoice.Get());
+            System.Data.DataSet ds=null;
+            await Task.Run(() => { ds=SalesInvoice.Get(); });
+            return View(ds);
         }
-
+        [HttpGet]
+        public async Task<ActionResult> Edit()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<ActionResult> Edit([Form]SalesInvoice s1)
+        {
+            return View();
+        }
 
     }
 }
