@@ -78,9 +78,11 @@ namespace Inventory.Controllers
         {
             if (ModelState.IsValid)
             {
-                await Task.Run(() => {
-                    s1.Create(); });
-             
+                await Task.Run(() =>
+                {
+                    s1.Create();
+                });
+
                 return RedirectToAction("Create");
             }
             else
@@ -91,12 +93,12 @@ namespace Inventory.Controllers
                 ViewBag.items = Item.Get();
                 return View(s1);
             }
-           
+
         }
         public async Task<ActionResult> Index()
         {
-            System.Data.DataSet ds=null;
-            await Task.Run(() => { ds=SalesInvoice.Get(); });
+            System.Data.DataSet ds = null;
+            await Task.Run(() => { ds = SalesInvoice.Get(); });
             return View(ds);
         }
         [HttpGet]
@@ -108,6 +110,29 @@ namespace Inventory.Controllers
         public async Task<ActionResult> Edit([Form]SalesInvoice s1)
         {
             return View();
+        }
+        [HttpGet]
+        public async Task<ActionResult> Details(int? id)
+        {
+            if (!id.HasValue) { return RedirectToAction("Index"); }
+            System.Data.DataSet ds = null;
+            await Task.Run(() =>
+           {
+               ds = SalesInvoice.GetSaleInvoiceDetails(id.Value);
+           });
+            return View(ds);
+        }
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if(id.HasValue)
+            {
+                SalesInvoice s1= new SalesInvoice() { SaleInvoiceId=id.Value};
+                await Task.Run(() =>
+                {
+                    s1.delete();
+                });
+            }
+            return RedirectToAction("Index");
         }
 
     }

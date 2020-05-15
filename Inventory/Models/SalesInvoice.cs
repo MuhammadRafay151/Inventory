@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using Inventory.CustomValidation;
 using System.Data.SqlClient;
 using System.Configuration;
+using DataBase;
 namespace Inventory.Models
 {
     public class SalesInvoice
@@ -91,6 +92,11 @@ INSERT INTO [dbo].[SaleInvoiceDetail]
             }
             return total;
         }
+        public void delete()
+        {
+            db x = new db();
+            x.ExecuteQuerry("delete from saleinvoice where SaleInvoiceId="+SaleInvoiceId);
+        }
         public static System.Data.DataSet Get()
         {
             var list = new List<SalesInvoice>();
@@ -105,5 +111,15 @@ join Party on Party.PartyId = SaleInvoice.PartyId");
 
 
         }
+        public static System.Data.DataSet GetSaleInvoiceDetails(int id)
+        {
+            db database = new db();
+            return database.Read(string.Format(@"select Item.Name,SaleInvoiceDetail.Qty,SaleInvoiceDetail.SalePrice,SaleInvoiceDetail.Total
+from SaleInvoiceDetail inner join Item on SaleInvoiceDetail.ItemId = Item.ItemId where SaleInvoiceDetail.SaleInvoiceId ={0};
+select sum(SaleInvoiceDetail.Total)count
+from SaleInvoiceDetail inner join Item on SaleInvoiceDetail.ItemId = Item.ItemId where SaleInvoiceDetail.SaleInvoiceId={0};
+", id));
+        }
+       
     }
 }

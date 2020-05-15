@@ -1,0 +1,47 @@
+﻿@model System.Data.DataSet
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-5">
+    <div class="col table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        Item
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                       Sale Price
+                    </th>
+                    <th>
+                        Total
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (System.Data.DataRow row in Model.Tables[0].Rows)
+                {
+                    <tr>
+                        <td>@row[0].ToString()</td>
+                        <td>@row[1].ToString()</td>
+                        <td>@row[2].ToString()</td>
+                        <td>@row[3].ToString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row justify-content-end">
+    <p>Total: @Model.Tables[1].Rows[0][0].ToString() Rs</p>
+</div>
+<div class="row justify-content-end">
+    
+    <a href="/Invoice/" class="btn btn-primary btn-raised">Back</a>
+</div>
+
