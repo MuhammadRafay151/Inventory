@@ -15,6 +15,7 @@ namespace Inventory.Models
         public int ItemId { get; set; }
         [Required]
         public int Qty { get; set; }
+        [Required]
         public decimal SalePrice { get; set; }
         public decimal Total { get; set; }
     }

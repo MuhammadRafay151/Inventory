@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.ModelBinding;
 using System.Web.Mvc;
@@ -73,10 +74,13 @@ namespace Inventory.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Create(SalesInvoice s1)
+        public async Task<ActionResult> Create([Form]SalesInvoice s1)
         {
             if (ModelState.IsValid)
             {
+                await Task.Run(() => {
+                    s1.Create(); });
+             
                 return RedirectToAction("Create");
             }
             else
@@ -88,6 +92,10 @@ namespace Inventory.Controllers
                 return View(s1);
             }
            
+        }
+        public async Task<ActionResult> Index()
+        {
+            return View( SalesInvoice.Get());
         }
 
 

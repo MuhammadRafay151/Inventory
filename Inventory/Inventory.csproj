@@ -593,6 +593,7 @@
     <Content Include="Views\Location\Index.cshtml" />
     <Content Include="Views\Invoice\Types.cshtml" />
     <Content Include="Views\Invoice\Create.cshtml" />
+    <Content Include="Views\Invoice\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

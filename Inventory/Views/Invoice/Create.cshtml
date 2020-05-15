@@ -82,7 +82,8 @@
                     @*<button class="btn btn-block btn-raised btn-primary d-inline">Submit</button>*@
                     <div class="d-flex w-100">
                         <div class="  align-self-center w-75">
-                            <button class="btn btn-primary btn-block btn-raised">Submit</button>
+                            <input type="submit" class="btn btn-primary btn-block btn-raised">
+                           
                         </div>
                         <div class="btn-group ml-auto ">
                             <button id="add" type="button" class="btn btn-primary btn-raised">+</button>
@@ -106,6 +107,9 @@
                                 <th>
                                     Qty
                                 </th>
+                                <th>
+                                    Amount
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -126,14 +130,20 @@
                                         }
 
                                         <td class="align-middle  text-center">
-                                            @Html.DropDownListFor(m => m.SaleInvoiceDetails[i].ItemId, l5, new { @class = "form-control", required = "required" })
+                                            @Html.DropDownListFor(m => m.SaleInvoiceDetails[i].ItemId, l5, new { @class = "form-control  _items", required = "required" })
                                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].ItemId, "", new { @class = "text-danger" })
 
                                         </td>
-                                        <td class="price align-middle  text-center"></td>
+                                        <td class="price align-middle  text-center">
+                                            @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].SalePrice, new { @class = "form-control  price", type = "number" })
+                                        </td>
                                         <td class="align-middle  text-center">
-                                            @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].Qty, new { @class = "form-control" })
+                                           
+                                            @Html.TextBoxFor(m => m.SaleInvoiceDetails[i].Qty, new { @class = "form-control qty", type = "number" })
                                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails[i].Qty, "", new { @class = "text-danger" })
+                                        </td>
+                                        <td class="align-middle  text-center">
+
                                         </td>
                                     </tr>
                                 }
@@ -141,14 +151,19 @@
                             @Html.ValidationMessageFor(m => m.SaleInvoiceDetails, "", new { @class = "text-danger" })
                         </tbody>
                     </table>
+
                 </div>
+
             </form>
+
         </div>
     </div>
 </div>
 <script>
     var count=0;
-
+  function a() {
+        console.log("a");
+    }
     $(document).ready(function () {
 
         $('#add').click(function () {
@@ -162,26 +177,61 @@
                                     }
                                     </select>
                                 </td>
-                                <td class="price align-middle  text-center"></td>
+                                <td class=" align-middle  text-center">
+                                <input type="number"  name="SaleInvoiceDetails[${count}].SalePrice" class="form-control price" step="any" required/>
+                                </td>
                                 <td class="align-middle  text-center">
-                                    <input required  name="SaleInvoiceDetails[${count}].Qty" class="form-control" />
+                                    <input type="number"    name="SaleInvoiceDetails[${count}].Qty" class="form-control qty"  required/>
+                                </td>
+                               <td class="align-middle  text-center">
+
+
                                 </td>
                             </tr>`;
             count++;
             $('tbody').append(templete)
         })
-          $('#add').trigger("click");
+        
         $('#sub').click(function () {
-            $('tbody').children().last().remove();
-            count--;
+            if ($('tbody').children().length>0) {
+                 $('tbody').children().last().remove();
+                count--;
+            }
+
         })
+        $(document).on('focusout', '.qty', function () {
+            var qty = this.value;
+            var price = this.parentNode.parentNode.children[1].children[0].value;
+            try {
+                var temp = parseFloat(qty) * parseFloat(price);
+                if (!isNaN(temp)) {
+                    this.parentNode.parentNode.children[3].innerHTML=temp+" Rs"
+                }
+            } catch (err) {
+                console.log(err);
+            };
 
-        $(document).on('change', '._items',function () {
-
+        })
+        $(document).on('focusout', '.price', function () {
+          
+            var price = this.value;
+            var qty = this.parentNode.parentNode.children[2].children[0].value;
+            try {
+                var temp = parseFloat(qty) * parseFloat(price);
+                if (!isNaN(temp)) {
+                    this.parentNode.parentNode.children[3].innerHTML=temp+" Rs"
+                }
+            } catch (err) {
+                console.log(err);
+            };
+         })
+   
+        $(document).on('change', '._items', function () {
             var selected_option = this.options[this.selectedIndex];
-            $(this.parentNode.parentNode).find('.price').html($(selected_option).data("price")+" Rs");
+            $(this.parentNode.parentNode).find('.price').val($(selected_option).data("price") );
         })
     });
+
 </script>
 
 
