@@ -11,7 +11,7 @@ namespace Inventory.Models
 {
     public class SalesInvoice
     {
-        public Int64 SaleInvoiceId { get; set; }
+        public int SaleInvoiceId { get; set; }
         [Required]
         public System.DateTime Date { get; set; }
         [IsSelected(ErrorMessage = "Please Select value")]
@@ -42,7 +42,7 @@ namespace Inventory.Models
                 sqlParm.Add("pid", PartyId);
                 sqlParm.Add("cb", CalculateBill());
                 var cmd = getsqlcommand(querry, sqlParm.GetParmList(), con, t1);
-                SaleInvoiceId=long.Parse( cmd.ExecuteScalar().ToString());
+                SaleInvoiceId=int.Parse( cmd.ExecuteScalar().ToString());
                 InsertList(con, t1);
                 t1.Commit();
             }
@@ -110,6 +110,37 @@ inner
 join Party on Party.PartyId = SaleInvoice.PartyId");
 
 
+        }
+        public static SalesInvoice GetSaleInvoice(int id)
+        {
+            string Querry = string.Format(@"select * from SaleInvoice where SaleInvoiceId={0}
+select * from SaleInvoiceDetail where SaleInvoiceId ={0}",id);
+            DataBase.db database = new DataBase.db();
+            var x =database.Read(Querry);
+            SalesInvoice s1 = new SalesInvoice()
+            {
+                SaleInvoiceId = Convert.ToInt32(x.Tables[0].Rows[0][0]),
+                Date = Convert.ToDateTime(x.Tables[0].Rows[0][1]),
+                InvoiceTypeId = Convert.ToInt64(x.Tables[0].Rows[0][2]),
+                LocationId = Convert.ToInt64(x.Tables[0].Rows[0][3]),
+                PartyId = Convert.ToInt64(x.Tables[0].Rows[0][4]),
+                TotalAmount= Convert.ToDecimal(x.Tables[0].Rows[0][5])
+
+            };
+            s1.SaleInvoiceDetails = new List<SaleInvoiceDetail>();
+            foreach(System.Data.DataRow row in x.Tables[1].Rows)
+            {
+                s1.SaleInvoiceDetails.Add(new SaleInvoiceDetail()
+                {
+                    SaleInvoiceDetailId = Convert.ToInt64(row[0]),
+                    SaleInvoiceId = Convert.ToInt32(row[1]),
+                    ItemId = Convert.ToInt32(row[2]),
+                    Qty = Convert.ToInt32(row[3]),
+                    SalePrice = Convert.ToInt32(row[4]),
+                    Total = Convert.ToDecimal(row[5])
+                });
+            }
+            return s1;
         }
         public static System.Data.DataSet GetSaleInvoiceDetails(int id)
         {

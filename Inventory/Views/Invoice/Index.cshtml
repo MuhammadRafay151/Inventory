@@ -47,7 +47,7 @@
                         <td>
                             <div class="btn-group">
                                 <button data-id="@row[0].ToString()" class="btn btn-primary detail btn-raised">Details</button>
-                                <button data-id="@row[0].ToString()" class="btn btn-primary btn-raised edt">Edit</button>
+                                <button data-id="@row[0].ToString()" class="btn btn-primary btn-raised edit">Edit</button>
                                 <button data-id="@row[0].ToString()" class="btn btn-primary btn-raised del">Delete</button>
 
                             </div>
@@ -64,6 +64,9 @@
     $(document).ready(function () {
         $('.detail').click(function () {
             window.location.href = "/Invoice/Details?id=" + $(this).data('id');
+        })
+        $('.edit').click(function () {
+            window.location.href = "/Invoice/Edit?id=" + $(this).data('id');
         })
         $('.del').click(function () {
             invoiceid = $(this).data('id');

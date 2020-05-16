@@ -102,13 +102,31 @@ namespace Inventory.Controllers
             return View(ds);
         }
         [HttpGet]
-        public async Task<ActionResult> Edit()
+        public async Task<ActionResult> Edit(int? id)
         {
-            return View();
+            if (!id.HasValue)
+            {
+                return RedirectToAction("Index");
+            }
+            SalesInvoice temp = null;
+            await Task.Run(() =>
+            {
+                ViewBag.itypes = InvoiceType.get();
+                ViewBag.loc = Location.GetLocations();
+                ViewBag.party = party.Getparties();
+                ViewBag.items = Item.Get();
+
+                temp = SalesInvoice.GetSaleInvoice(id.Value);
+            });
+            return View(temp);
         }
-        [HttpGet]
-        public async Task<ActionResult> Edit([Form]SalesInvoice s1)
+        [HttpPost]
+        public ActionResult Edit([Form]SalesInvoice s1)
         {
+            if (ModelState.IsValid)
+            {
+
+            }
             return View();
         }
         [HttpGet]
@@ -124,9 +142,9 @@ namespace Inventory.Controllers
         }
         public async Task<ActionResult> Delete(int? id)
         {
-            if(id.HasValue)
+            if (id.HasValue)
             {
-                SalesInvoice s1= new SalesInvoice() { SaleInvoiceId=id.Value};
+                SalesInvoice s1 = new SalesInvoice() { SaleInvoiceId = id.Value };
                 await Task.Run(() =>
                 {
                     s1.delete();
