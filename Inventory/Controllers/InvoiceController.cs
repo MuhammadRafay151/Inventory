@@ -109,6 +109,7 @@ namespace Inventory.Controllers
                 return RedirectToAction("Index");
             }
             SalesInvoice temp = null;
+            ViewBag.id = id.Value;
             await Task.Run(() =>
             {
                 ViewBag.itypes = InvoiceType.get();
@@ -125,9 +126,18 @@ namespace Inventory.Controllers
         {
             if (ModelState.IsValid)
             {
-
+                s1.Update();
+                return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                ViewBag.itypes = InvoiceType.get();
+                ViewBag.loc = Location.GetLocations();
+                ViewBag.party = party.Getparties();
+                ViewBag.items = Item.Get();
+                return View(SalesInvoice.GetSaleInvoice(s1.SaleInvoiceId));
+            }
+            //return View();
         }
         [HttpGet]
         public async Task<ActionResult> Details(int? id)

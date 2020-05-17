@@ -27,7 +27,7 @@
 <div class="row mt-5">
     <div class="col">
         <div class="card">
-            <form action="/Invoice/Edit" method="post">
+            <form action="/Invoice/Edit?SaleInvoiceId=@ViewBag.id" method="post">
                 <div class="card-header border border-dark">
                     <div class="row ">
                         <div class="col">
@@ -172,8 +172,7 @@
                                             <div class="checkbox">
                                                 <label>
                                                     Delete
-                                                    <input type="checkbox" />
-
+                                                    <input type="checkbox" name="@Html.NameFor(m=>m.SaleInvoiceDetails[i].Isdeleted)" value="true" />
                                                 </label>
                                             </div>
                                         </td>
@@ -291,6 +290,9 @@
             initialrows -= 1;
            $('#delete').modal('hide')
         })
+        $("input[type=checkbox]").click(function () {
+            calculatebill();
+        })
     });
     function calculatebill(){
         var total = 0.0;
@@ -307,12 +309,9 @@
                  var data = x[i].cells[3].innerHTML;
             total += parseFloat(data.split(" ")[0]);
             }
-
-          //  console.log($(x[i].cells[4]).find("input[type=checkbox]").prop("checked"))
-
         }
         $('#total').html('Total: ' + total + " Rs");
-        //console.log(total);
+     
     }
 </script>
 

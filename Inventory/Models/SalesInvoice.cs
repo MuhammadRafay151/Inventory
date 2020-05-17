@@ -22,15 +22,15 @@ namespace Inventory.Models
         public long PartyId { get; set; }
         public decimal TotalAmount { get; set; }
         [Required(ErrorMessage = "Kindly Add Details")]
-        public  List<SaleInvoiceDetail> SaleInvoiceDetails { get; set; }
+        public List<SaleInvoiceDetail> SaleInvoiceDetails { get; set; }
         public void Create()
         {
-           var x= System.Configuration.ConfigurationManager.
-       ConnectionStrings["ConnectionString"].ConnectionString;
+            var x = System.Configuration.ConfigurationManager.
+        ConnectionStrings["ConnectionString"].ConnectionString;
             SqlConnection con = new SqlConnection(x);
             DataBase.SqlParm sqlParm = new DataBase.SqlParm();
             con.Open();
-            SqlTransaction t1 ;
+            SqlTransaction t1;
             t1 = con.BeginTransaction();
             try
             {
@@ -42,7 +42,7 @@ namespace Inventory.Models
                 sqlParm.Add("pid", PartyId);
                 sqlParm.Add("cb", CalculateBill());
                 var cmd = getsqlcommand(querry, sqlParm.GetParmList(), con, t1);
-                SaleInvoiceId=int.Parse( cmd.ExecuteScalar().ToString());
+                SaleInvoiceId = int.Parse(cmd.ExecuteScalar().ToString());
                 InsertList(con, t1);
                 t1.Commit();
             }
@@ -52,10 +52,10 @@ namespace Inventory.Models
             }
             con.Close();
         }
-        private SqlCommand getsqlcommand(string querry, List<SqlParameter> sqlParameters,SqlConnection sqlConnection,SqlTransaction sqlTransaction)
+        private SqlCommand getsqlcommand(string querry, List<SqlParameter> sqlParameters, SqlConnection sqlConnection, SqlTransaction sqlTransaction)
         {
             SqlCommand cmd = new SqlCommand(querry, sqlConnection, sqlTransaction);
-            foreach(var i in sqlParameters)
+            foreach (var i in sqlParameters)
             {
                 cmd.Parameters.Add(i);
             }
@@ -72,36 +72,59 @@ INSERT INTO [dbo].[SaleInvoiceDetail]
            ,[Total])
      VALUES
            (@SaleInvoiceId,@ItemId,@Qty,@SalePrice,@Total)";
-            foreach(var x in SaleInvoiceDetails)
+            foreach (var x in SaleInvoiceDetails)
             {
                 var parm = new DataBase.SqlParm();
-                parm.Add("@SaleInvoiceId",SaleInvoiceId);
-                parm.Add("@ItemId",x.ItemId);
-                parm.Add("@Qty",x.Qty);
-                parm.Add("@SalePrice",x.SalePrice);
-                parm.Add("@Total",(Decimal)x.Qty*x.SalePrice);
+                parm.Add("@SaleInvoiceId", SaleInvoiceId);
+                parm.Add("@ItemId", x.ItemId);
+                parm.Add("@Qty", x.Qty);
+                parm.Add("@SalePrice", x.SalePrice);
+                parm.Add("@Total", (Decimal)x.Qty * x.SalePrice);
+                getsqlcommand(querry, parm.GetParmList(), sqlConnection, sqlTransaction).ExecuteNonQuery();
+            }
+        }
+        private void InsertList(List<SaleInvoiceDetail> items,SqlConnection sqlConnection, SqlTransaction sqlTransaction)
+        {
+            var querry = @"
+INSERT INTO [dbo].[SaleInvoiceDetail]
+           ([SaleInvoiceId]
+           ,[ItemId]
+           ,[Qty]
+           ,[SalePrice]
+           ,[Total])
+     VALUES
+           (@SaleInvoiceId,@ItemId,@Qty,@SalePrice,@Total)";
+            foreach (var x in items)
+            {
+                var parm = new DataBase.SqlParm();
+                parm.Add("@SaleInvoiceId", SaleInvoiceId);
+                parm.Add("@ItemId", x.ItemId);
+                parm.Add("@Qty", x.Qty);
+                parm.Add("@SalePrice", x.SalePrice);
+                parm.Add("@Total", (Decimal)x.Qty * x.SalePrice);
                 getsqlcommand(querry, parm.GetParmList(), sqlConnection, sqlTransaction).ExecuteNonQuery();
             }
         }
         private Decimal CalculateBill()
         {
-            Decimal total=0;
-            foreach(var x in SaleInvoiceDetails)
+            Decimal total = 0;
+            foreach (var x in SaleInvoiceDetails)
             {
-                total += x.Qty * x.SalePrice;
+                if (!x.Isdeleted)
+                    total += x.Qty * x.SalePrice;
             }
             return total;
         }
         public void delete()
         {
             db x = new db();
-            x.ExecuteQuerry("delete from saleinvoice where SaleInvoiceId="+SaleInvoiceId);
+            x.ExecuteQuerry("delete from saleinvoice where SaleInvoiceId=" + SaleInvoiceId);
         }
         public static System.Data.DataSet Get()
         {
             var list = new List<SalesInvoice>();
             DataBase.db database = new DataBase.db();
-          return  database.Read(@"select SaleInvoice.SaleInvoiceId,SaleInvoice.Date,InvoiceType.InvoiceType,
+            return database.Read(@"select SaleInvoice.SaleInvoiceId,SaleInvoice.Date,InvoiceType.InvoiceType,
 Location.Name as location, Party.Name as Party, SaleInvoice.TotalAmount
 from SaleInvoice inner join InvoiceType on InvoiceType.InvoiceTypeId = SaleInvoice.InvoiceTypeId
 inner
@@ -114,9 +137,9 @@ join Party on Party.PartyId = SaleInvoice.PartyId");
         public static SalesInvoice GetSaleInvoice(int id)
         {
             string Querry = string.Format(@"select * from SaleInvoice where SaleInvoiceId={0}
-select * from SaleInvoiceDetail where SaleInvoiceId ={0}",id);
+select * from SaleInvoiceDetail where SaleInvoiceId ={0}", id);
             DataBase.db database = new DataBase.db();
-            var x =database.Read(Querry);
+            var x = database.Read(Querry);
             SalesInvoice s1 = new SalesInvoice()
             {
                 SaleInvoiceId = Convert.ToInt32(x.Tables[0].Rows[0][0]),
@@ -124,11 +147,11 @@ select * from SaleInvoiceDetail where SaleInvoiceId ={0}",id);
                 InvoiceTypeId = Convert.ToInt64(x.Tables[0].Rows[0][2]),
                 LocationId = Convert.ToInt64(x.Tables[0].Rows[0][3]),
                 PartyId = Convert.ToInt64(x.Tables[0].Rows[0][4]),
-                TotalAmount= Convert.ToDecimal(x.Tables[0].Rows[0][5])
+                TotalAmount = Convert.ToDecimal(x.Tables[0].Rows[0][5])
 
             };
             s1.SaleInvoiceDetails = new List<SaleInvoiceDetail>();
-            foreach(System.Data.DataRow row in x.Tables[1].Rows)
+            foreach (System.Data.DataRow row in x.Tables[1].Rows)
             {
                 s1.SaleInvoiceDetails.Add(new SaleInvoiceDetail()
                 {
@@ -151,6 +174,86 @@ select sum(SaleInvoiceDetail.Total)count
 from SaleInvoiceDetail inner join Item on SaleInvoiceDetail.ItemId = Item.ItemId where SaleInvoiceDetail.SaleInvoiceId={0};
 ", id));
         }
-       
+        public void Update()
+        {
+            string querry = @"UPDATE [dbo].[SaleInvoice]
+   SET[Date] =@dt
+      ,[InvoiceTypeId] =@tid 
+      ,[LocationId] = @loc
+      ,[PartyId] = @pid
+      ,[TotalAmount] = @cb
+ WHERE SaleInvoiceId = @id";
+            var x = System.Configuration.ConfigurationManager.
+       ConnectionStrings["ConnectionString"].ConnectionString;
+            SqlConnection con = new SqlConnection(x);
+            DataBase.SqlParm sqlParm = new DataBase.SqlParm();
+            con.Open();
+            SqlTransaction t1;
+            t1 = con.BeginTransaction();
+            try
+            {
+                sqlParm.Add("dt", Date);
+                sqlParm.Add("tid", InvoiceTypeId);
+                sqlParm.Add("loc", LocationId);
+                sqlParm.Add("pid", PartyId);
+                sqlParm.Add("id", SaleInvoiceId);
+                sqlParm.Add("cb", CalculateBill());
+                var cmd = getsqlcommand(querry, sqlParm.GetParmList(), con, t1);
+                cmd.ExecuteNonQuery();
+                UpdateList(con, t1);
+                t1.Commit();
+            }
+            catch (Exception)
+            {
+                t1.Rollback();
+            }
+            con.Close();
+        }
+        private void UpdateList(SqlConnection sqlConnection, SqlTransaction sqlTransaction)
+        {
+            var newitems = new List<SaleInvoiceDetail>();
+            var querry = @"UPDATE [dbo].[SaleInvoiceDetail]
+      SET 
+      [ItemId] = @ItemId
+      ,[Qty] = @Qty
+      ,[SalePrice] = @SalePrice
+      ,[Total] = @Total
+ WHERE SaleInvoiceId=@SaleInvoiceId and SaleInvoiceDetailId=@SaleInvoiceDetailId";
+            var querry2 = "delete from SaleInvoiceDetail where SaleInvoiceDetailId=@SaleInvoiceDetailId and SaleInvoiceId=@SaleInvoiceId";
+            foreach (var x in SaleInvoiceDetails)
+            {
+                var parm = new DataBase.SqlParm();
+                if (x.Isdeleted)
+                {
+                    
+                    parm.Add("@SaleInvoiceId", SaleInvoiceId);
+                    parm.Add("@SaleInvoiceDetailId", x.SaleInvoiceDetailId);
+                    getsqlcommand(querry2, parm.GetParmList(), sqlConnection, sqlTransaction).ExecuteNonQuery();
+
+                }
+                else if(x.SaleInvoiceDetailId==0)
+                {
+                    newitems.Add(x);
+                }
+                else
+                {
+                    parm.Add("@ItemId", x.ItemId);
+                    parm.Add("@Qty", x.Qty);
+                    parm.Add("@SalePrice", x.SalePrice);
+                    parm.Add("@Total", (Decimal)x.Qty * x.SalePrice);
+                    parm.Add("@SaleInvoiceId", SaleInvoiceId);
+                    parm.Add("@SaleInvoiceDetailId", x.SaleInvoiceDetailId);
+                    getsqlcommand(querry, parm.GetParmList(), sqlConnection, sqlTransaction).ExecuteNonQuery();
+                }
+
+              
+              
+            }
+            if(newitems.Count>0)
+            {
+                InsertList(newitems, sqlConnection, sqlTransaction);
+                newitems = null;
+            }
+        }
     }
 }

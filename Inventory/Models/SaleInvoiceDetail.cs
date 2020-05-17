@@ -18,5 +18,6 @@ namespace Inventory.Models
         [Required]
         public decimal SalePrice { get; set; }
         public decimal Total { get; set; }
+        public bool Isdeleted { get; set; }
     }
 }
